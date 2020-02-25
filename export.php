@@ -39,25 +39,18 @@ $objPHPExcel->setActiveSheetIndex(0);
 $objPHPExcel->getActiveSheet()->setTitle($nameFile);
 $objPHPExcel->getProperties()->setCreator("Octopus");
 
-## - CONVERTIR EN UN ARRAY MULTIDIMENSIONAL LA INFORMACIÓN DE LA DB
-$rowNumber = 1;
+//ADD ELEMENTS TO ARRAY
+$datos_excel = [];
+
+if (!$result->num_rows) exit();
+
 while ($row = $result->fetch_assoc()) {
-    $col = 'A';
-    foreach($row as $key => $cell) {
-        if($rowNumber==1){
-            $data[$rowNumber][$key]= $key;
-            $col++;
-        }else{
-            $data[$rowNumber][$key]= $cell;
-            $col++;
-        }
-        
-    }
-    $rowNumber++;
-  }
+    array_push($datos_excel, $row);
+}
+array_unshift($datos_excel, array_keys($datos_excel[0]));
 
+$objPHPExcel->getActiveSheet()->fromArray($datos_excel);
 
-$objPHPExcel->getActiveSheet()->fromArray($data);
 $objWriter  =   new PHPExcel_Writer_Excel2007($objPHPExcel);
   
 
